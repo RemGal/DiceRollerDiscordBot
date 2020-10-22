@@ -58,15 +58,58 @@ namespace DiceRollerDiscordBot
         {
             string mod = string.Join("", args);
             Random rnd = new Random();
-            int d = rnd.Next(1, 21);
+            int roll = 0;
             string output = "\r";
             if (mod != null && mod != "")
             {
-                int sum = d + Int32.Parse(mod);
-                if (mod.Substring(0, 1) != "-" && mod.Substring(0, 1) != "+") { mod.Insert(0, "+"); }
-                output += d + " " + mod.Substring(0, 1) + " " + mod.Substring(1, mod.Length - 1) + " = " + DSharpPlus.Formatter.Bold(sum.ToString());
+                if ("Aa".Contains(mod.Substring(0, 1))) { 
+                    int d1 =  rnd.Next(1, 21);
+                    int d2 = rnd.Next(1, 21);
+                    roll = Math.Max(d1,d2);
+
+                    if (d1 == d2) { output += DSharpPlus.Formatter.Bold(d1.ToString()) + " " + DSharpPlus.Formatter.Bold(d1.ToString()); }
+                    else if (d1 == roll) { output += DSharpPlus.Formatter.Bold(d1.ToString()) + " " + d2; }
+                    else { output += d1 + " " + DSharpPlus.Formatter.Bold(d2.ToString()); }
+
+                    if (mod.Length > 1)
+                    {
+                        if (mod.Substring(1, 1) != "-" && mod.Substring(1, 1) != "+") { mod.Insert(1, "+"); }
+                        int sum = roll + Int32.Parse(mod.Substring(1, mod.Length - 1));
+                        output += "\r" + roll + " " + mod.Substring(1, 1) + " " + mod.Substring(2, mod.Length - 2) + " = " + DSharpPlus.Formatter.Bold(sum.ToString());
+
+                    }
+                }
+                else if ("Dd".Contains(mod.Substring(0, 1)))
+                {
+                    int d1 = rnd.Next(1, 21);
+                    int d2 = rnd.Next(1, 21);
+                    roll = Math.Min(d1, d2);
+
+                    if (d1 == d2) { output += DSharpPlus.Formatter.Bold(d1.ToString()) + " " + DSharpPlus.Formatter.Bold(d1.ToString()); }
+                    else if (d1 == roll) { output += DSharpPlus.Formatter.Bold(d1.ToString()) + " " + d2; }
+                    else { output += d1 + " " + DSharpPlus.Formatter.Bold(d2.ToString()); }
+
+                    if (mod.Length > 1)
+                    {
+                        if (mod.Substring(1, 1) != "-" && mod.Substring(1, 1) != "+") { mod.Insert(1, "+"); }
+                        int sum = roll + Int32.Parse(mod.Substring(1, mod.Length - 1));
+                        output += "\r" + roll + " " + mod.Substring(1, 1) + " " + mod.Substring(2, mod.Length - 2) + " = " + DSharpPlus.Formatter.Bold(sum.ToString());
+
+                    }
+                }
+                else if ("+-0123456789".Contains(mod.Substring(0, 1)))
+                {
+                    int d = rnd.Next(1, 21);
+                    if (mod.Substring(0, 1) != "-" && mod.Substring(0, 1) != "+") { mod.Insert(0, "+"); };
+                    int sum = roll + Int32.Parse(mod.Substring(1, mod.Length - 1));
+                    output += d + " " + mod.Substring(0, 1) + " " + mod.Substring(1, mod.Length - 1) + " = " + DSharpPlus.Formatter.Bold(sum.ToString());
+                }
+                
             }
-            else { output += DSharpPlus.Formatter.Bold(d.ToString()); }
+            else { 
+                int d = rnd.Next(1, 21);
+                output += DSharpPlus.Formatter.Bold(d.ToString());
+                }
             await ctx.Channel.SendMessageAsync(ctx.Member.Mention + output).ConfigureAwait(false);
 
         }
