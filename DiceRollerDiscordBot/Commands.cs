@@ -116,11 +116,32 @@ namespace DiceRollerDiscordBot
 
         [Command("wh")]
         [Description("Warhammer d100 based systems")]
-        public async Task Wh(CommandContext ctx)
+        public async Task Wh(CommandContext ctx, params string[] args)
         {
             Random rnd = new Random();
             int d = rnd.Next(1, 101);
-            await ctx.Channel.SendMessageAsync(ctx.Member.Mention + "\r" + DSharpPlus.Formatter.Bold(d.ToString())).ConfigureAwait(false);
+            string output = "\rRoll: " + DSharpPlus.Formatter.Bold(d.ToString()) + "\r";
+            decimal comp = Int32.Parse(args[0]);
+            if (args.Length > 1)
+            {   
+                comp += Int32.Parse(args[1]);
+                output += "Characteristic: " + args[0] + " " + args[1].Substring(0,1) + " " + args[1].Substring(1) + " = "+ comp;
+            }
+            else {
+                output += "Characteristic: " + args[0];
+            }
+            comp = (d - comp) /10;
+            if (comp < 0)
+            {
+                output += "\r" + DSharpPlus.Formatter.Bold("Success!");
+                output += " (" + DSharpPlus.Formatter.Bold(Math.Abs(Math.Truncate(comp)).ToString()) +")";
+            }
+            else
+            {
+                output += "\r" + DSharpPlus.Formatter.Bold("Failure!");
+                output += " (" + DSharpPlus.Formatter.Bold(Math.Abs(Math.Truncate(comp)).ToString()) + ")";
+            }
+            await ctx.Channel.SendMessageAsync(ctx.Member.Mention + output).ConfigureAwait(false);
         }
 
 
